@@ -1,0 +1,27 @@
+### Volume demo with NFS
+
+# Install NFS tools
+sudo apt-get install nfs-common
+
+# Install Docker Volume Netshare
+wget https://github.com/ContainX/docker-volume-netshare/releases/download/v0.18/docker-volume-netshare_0.18_amd64.deb
+sudo dpkg -i docker-volume-netshare_0.18_amd64.deb
+
+# Start the Docker Volume Netshare daemon
+service docker-volume-netshare start
+
+# Start Docker Volume Netshare NFS daemon
+sudo docker-volume-netshare nfs &
+
+# Mount NFS on Docker Host
+
+sudo mkdir /nfs
+sudo mount -t nfs4 -o nfsvers=4.1 \
+eu-west-1b.fs-5c926595.efs.eu-west-1.amazonaws.com:/ nfs
+
+# Unmount /efs
+sudo umount /efs
+
+# Run container with NFS mount as volume
+docker run -i -t --volume-driver=nfs -v \
+eu-west-1b.fs-5c926595.efs.eu-west-1.amazonaws.com:/mount ubuntu /bin/bash
